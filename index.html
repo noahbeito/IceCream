@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍦</title>
+    <style>
+        #toppings {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>👁️ 😱</h1>
+    <form>
+        <label for="scoops">Number of scoops</label>
+        <input id="scoops" type="number" min="1" max="4" />
+        <br/>
+        <input type="radio" id="cone" name="vessel" value="cone" />
+        <label for="cone">Cone</label>
+        <input type="radio" id="cup" name="vessel" value="cup" />
+        <label for="cup">Cup</label>
+
+        <div id="toppings">
+            <h4>Toppings</h4>
+            <input type="checkbox" id="sprinkles" name="topping" value="sprinkles" data-price="0.50"/>
+            <label for="sprinkles">Sprinkles 🧁 ($.50)</label>
+            <input type="checkbox" id="whipped-cream" name="topping" value="whipped-cream" data-price="0.25"/>
+            <label for="whipped-cream">Whipped cream ☁️ ($.25)</label>
+            <br/>
+            <input type="checkbox" id="hot-fudge" name="topping" value="hot-fudge" data-price="1.25"/>
+            <label for="hot-fudge">Hot fudge 💩 ($1.25)</label>
+            <input type="checkbox" id="cherry" name="topping" value="cherry" data-price="0.25"/>
+            <label for="cherry">Cherry 🍒 ($.25)</label>
+        </div>
+        <br/>
+        <button>Submit</button>
+    </form>
+    <div>
+        <div id="basePrice">Base price: </div>
+        <div id="tax">Tax: </div>
+        <div id="total">Total: </div>
+    </div>
+    <script>
+        document.getElementsByName('vessel').forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                if (this.value === 'cup') {
+                    document.getElementById('toppings').style.display = 'block';
+                } else {
+                    document.getElementById('toppings').style.display = 'none';
+                    document.querySelectorAll('input[name="topping"]').forEach(function(checkbox) {
+                        checkbox.checked = false;
+                    });
+                }
+                updatePrice();
+            });
+        });
+
+        document.getElementById('scoops').addEventListener('change', updatePrice);
+        document.querySelectorAll('input[name="topping"]').forEach(function(checkbox) {
+            checkbox.addEventListener('change', updatePrice);
+        });
+
+        function updatePrice() {
+            var extraScoopPrice = 1.25
+            var oneScoopPrice = 2.25;
+            var extraScoops = document.getElementById('scoops').value - 1;
+            var toppingsPrice = getToppingsPrice();
+            var basePrice = oneScoopPrice + (extraScoops * extraScoopPrice) + toppingsPrice;
+            var tax = basePrice * 0.08;
+
+            console.log('extraScoops', extraScoops)
+            console.log('toppingsPrice', toppingsPrice)
+            console.log('basePrice', basePrice)
+
+            document.querySelector('#basePrice').textContent = `Base price: $${basePrice.toFixed(2)}`;
+            document.querySelector('#tax').textContent = `Tax: $${tax.toFixed(2)}`;
+            document.querySelector('#total').textContent = `Total: $${(basePrice + tax).toFixed(2)}`;
+        }
+
+        function getToppingsPrice() {
+            var toppings = document.querySelectorAll('input[name="topping"]:checked');
+            var toppingsPrice = 0;
+            toppings.forEach(function(topping) {
+                toppingsPrice += parseFloat(topping.getAttribute('data-price'));
+            });
+            return toppingsPrice;
+        }
+    </script>
+</body>
+</html>
